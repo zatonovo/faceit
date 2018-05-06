@@ -9,4 +9,4 @@ pyyolo
 env
 data
 _*.jpg
-.*.swp
+**/.*.swp

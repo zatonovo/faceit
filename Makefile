@@ -1,13 +1,13 @@
 
 all:
 	mkdir -p data/persons
-	docker build -t deepfakes-gpu .
+	docker build -t deepfakes .
 
 init:
 	git submodule update --init --recursive
 
 run:
-	nvidia-docker run --name deepfakes-gpu -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -it deepfakes-cpu
+	nvidia-docker run --name deepfakes -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -it deepfakes
 
 demo: run
 	echo "Get example faces"

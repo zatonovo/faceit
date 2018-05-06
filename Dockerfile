@@ -1,4 +1,5 @@
-FROM debian:stretch
+#FROM debian:stretch
+FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 
 # install debian packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -21,16 +22,38 @@ RUN apt-get update -qq \
   python3-pydot \
   python3-setuptools \
   ffmpeg \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+  # For Docker (https://docs.docker.com/install/linux/docker-ce/debian/#set-up-the-repository)
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg2 \
+  software-properties-common
 
-RUN wget -O - -q 'https://gist.githubusercontent.com/allenday/f426e0f146d86bfc3dada06eda55e123/raw/41b6d3bc8ab2dfe1e1d09135851c8f11b8dc8db3/install-cuda.sh' | sudo bash
-RUN wget -O - -q 'https://gist.githubusercontent.com/allenday/c875eaf21a2b416f6478c0a48e428f6a/raw/f7feca1acc1a992afa84f347394fd7e4bfac2599/install-docker-ce.sh' | sudo bash
-wget https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
-sudo dpkg -i nvidia-docker*.deb
+#RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+#RUN add-apt-repository \
+#  "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable" \
+# && apt-get update \
+# && apt-get install -y docker-ce
+
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 
+RUN add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
+ && apt-get update \
+ && apt-get install -y docker-ce
+
+#RUN add-apt-repository \
+  #"deb http://httpredir.debian.org/debian/ stretch main contrib non-free" \
+ #&& apt-get update \
+ #&& apt-get install -y linux-headers-amd64 nvidia-driver nvidia-cuda-toolkit
+
+# Install Nvidia Docker
+RUN curl -fsSLO https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+RUN dpkg -i nvidia-docker*.deb
 
 COPY ./requirements.txt .
 RUN pip3 --no-cache-dir install -r ./requirements.txt
 
+#RUN apt-get clean \
+# && rm -rf /var/lib/apt/lists/*
 WORKDIR /srv/
 
