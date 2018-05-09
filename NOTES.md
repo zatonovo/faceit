@@ -58,8 +58,8 @@ docker run --name deepfakes-gpu -p 8888:8888 -v $(pwd):/srv -it deepfakes-cpu
 
 From within container
 ```{bash}
-apt-get update
-apt-get install ffmpeg
+x apt-get update
+x apt-get install ffmpeg
 pip3 install -r requirements.txt
 pip3 install requests
 

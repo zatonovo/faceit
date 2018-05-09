@@ -6,8 +6,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -qq \
  && apt-get install --no-install-recommends -y \
-    # install essentials
-  build-essential \ 
+  # install essentials
+  build-essential vim less\ 
   # install python 3
   python3.5 \ 
   python3-dev \
@@ -22,6 +22,7 @@ RUN apt-get update -qq \
   python3-pydot \
   python3-setuptools \
   ffmpeg \
+  imagemagick libmagick++-dev \
   # For Docker (https://docs.docker.com/install/linux/docker-ce/debian/#set-up-the-repository)
   apt-transport-https \
   ca-certificates \
@@ -31,6 +32,13 @@ RUN apt-get update -qq \
 
 COPY ./requirements.txt .
 RUN pip3 --no-cache-dir install -r ./requirements.txt
+
+# These need to be installed in the image as well.
+# They are already downloaded by the Makefile
+COPY ./libcudnn6_6.0.21-1+cuda8.0_amd64.deb .
+COPY ./libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb .
+RUN dpkg -i libcudnn6_6.0.21-1+cuda8.0_amd64.deb
+RUN dpkg -i libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb
 
 #RUN apt-get clean \
 # && rm -rf /var/lib/apt/lists/*
