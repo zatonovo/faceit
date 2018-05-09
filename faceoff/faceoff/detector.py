@@ -71,6 +71,11 @@ from keras.applications.inception_v3 import preprocess_input, decode_predictions
 
 
 def create_model():
+  """
+  @example
+  model = detector.create_model()
+  detector.train_detector(model, data)
+  """
   base = InceptionV3(weights='imagenet')
 
   # Extract intermediate layer outputs
@@ -97,17 +102,19 @@ def create_model():
   transfer_model.compile(loss='categorical_crossentropy',
     optimizer='adam', metrics=['accuracy'])
 
+  return transfer_model
 
-def train_detector(model, data):
+
+def train_detector(model, data, epochs=20):
   """
   model = create_model()
   data = split_data()
   model = train_detector(model, data)
   """
   (X_train,X_test, y_train,y_test) = data
-  model.fit(X_train, y_train, epochs=20,
+  model.fit(X_train, y_train, epochs=epochs,
     validation_data=(X_test, y_test))
-  loss, acc = transfer_model.evaluate(X_test, y_test)
+  loss, acc = model.evaluate(X_test, y_test)
   print('Loss {}, Accuracy {}'.format(loss, acc))
   return model
 
@@ -156,8 +163,8 @@ def create_dataset(real_dirs, fake_dirs):
 
   reals = read_folders(real_dirs)
   fakes = read_folders(fake_dirs)
-  features = np.concatenate([reals, fakes])
-  labels = np.concatenate([np.zeros(reals.shape[0]), np.ones(reals.shape[0])])
+  features = np.concatenate([reals, fakes]).astype('float32')
+  labels = np.concatenate([np.zeros(reals.shape[0]), np.ones(fakes.shape[0])])
 
   return (features, labels)
 
