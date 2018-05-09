@@ -25,10 +25,13 @@
 # make all
 # make demo
 
+# Set to cpu for cpu build: make ARCH=cpu all
+ARCH ?= gpu
 
 all: get-cuda
 	mkdir -p data/persons
 	mkdir -p data/output
+	cp requirements-${ARCH}.txt requirements.txt
 	docker build -t deepfakes .
 
 get-cuda:
@@ -74,7 +77,7 @@ init-debian: init
 
 
 
-bash:
+run-cpu:
 	docker run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -it --rm deepfakes
 
 run:

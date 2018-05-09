@@ -76,11 +76,14 @@ def crop_frame(frame):
   return frame[int(h/2):h, 0:w]
 
 
-def extract_faces(frame_path, out_path, face_path, processes=4):
+def extract_faces(frame_path, out_path, face_path, processes=1):
   """
   @param frame_path Path of frames extracted from video
   @param out_path Destination directory
   @param face_path Path to a single image of a face. The face acts as a filter in the extraction process
+
+  NOTE: processes > 1 results in CUDA initialization error:
+  RuntimeError: Error while calling cudaGetDevice(&the_device_id) in file /tmp/pip-build-sjk7kks6/dlib/dlib/dnn/gpu_data.cpp:178. code: 3, reason: initialization error
   """
   if os.path.exists(out_path):
     msg = '[extract_faces] Skipping extraction since faces already exist at {}'

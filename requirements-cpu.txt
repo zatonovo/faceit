@@ -1,0 +1,18 @@
+# Merge faceswap and faceit requirements
+pathlib==1.0.1
+scandir==1.6
+h5py==2.7.1
+Keras==2.1.2
+opencv-python==3.3.0.10
+tensorflow
+sklearn
+scikit-image
+dlib
+face_recognition
+requests
+youtube-dl
+moviepy
+numpy==1.14.0
+tqdm
+pydot
+graphviz

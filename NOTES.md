@@ -75,3 +75,8 @@ python3 faceit.py train fallon_to_oliver
 echo "Convert video"
 python faceit.py convert fallon_to_oliver fallon_emmastone.mp4 --start 40 --duration 55 --side-by-side
 ```
+
+
+## Data Sources
+Fakes:
+https://deepfakeshub.net/category/gillian-anderson/

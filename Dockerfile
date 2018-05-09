@@ -21,7 +21,6 @@ RUN apt-get update -qq \
   python3-yaml \
   python3-pydot \
   python3-setuptools \
-  ffmpeg \
   imagemagick libmagick++-dev \
   # For Docker (https://docs.docker.com/install/linux/docker-ce/debian/#set-up-the-repository)
   apt-transport-https \
@@ -29,6 +28,11 @@ RUN apt-get update -qq \
   curl \
   gnupg2 \
   software-properties-common
+
+RUN add-apt-repository -y ppa:jonathonf/ffmpeg-3 \
+ && apt-get update \
+ && apt-get install --no-install-recommends -y \
+  ffmpeg
 
 COPY ./requirements.txt .
 RUN pip3 --no-cache-dir install -r ./requirements.txt
