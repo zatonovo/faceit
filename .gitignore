@@ -10,3 +10,5 @@ env
 data
 _*.jpg
 **/.*.swp
+requirements.txt
+private

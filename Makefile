@@ -27,6 +27,12 @@
 
 # Set to cpu for cpu build: make ARCH=cpu all
 ARCH ?= gpu
+ifeq ($(ARCH),gpu)
+  DOCKER = nvidia-docker
+else
+  DOCKER = docker
+endif
+PYTHONPATH ?= .:faceswap:faceoff
 
 all: get-cuda
 	mkdir -p data/persons
@@ -77,11 +83,8 @@ init-debian: init
 
 
 
-run-cpu:
-	docker run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -it --rm deepfakes
-
 run:
-	nvidia-docker run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -it --rm deepfakes
+	$(DOCKER) run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -e PYTHONPATH="$(PYTHONPATH)" -it --rm deepfakes
 
 demo: run
 	echo "Get example faces"

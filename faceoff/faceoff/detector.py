@@ -7,8 +7,6 @@
 This can be done locally to save hosting fees
 $ sudo make bash
 
-import sys; sys.path.append('faceoff')
-sys.path.append('faceswap')
 from faceoff import video
 
 frame_path = 'data/processed/fallon_emmastone_fake.mp4_frames'
@@ -65,6 +63,17 @@ from keras.applications.inception_v3 import preprocess_input, decode_predictions
 # cv2.imread('data/processed/fallon_emmastone_fake.mp4_faces/frame_7240.jpg')
 # which uses BGR color-space
 
+"""
+from faceoff import detector
+
+(X,y) = detector.create_dataset(
+  ['data/processed/fallon_emmastone.mp4_faces'], 
+  ['data/processed/fallon_emmastone_fake.mp4_faces'])
+data = detector.split_data(X,y)
+
+model = detector.create_model()
+model = detector.train_detector(model, data)
+"""
 
 
 
@@ -134,7 +143,6 @@ def create_dataset(real_dirs, fake_dirs):
   @param fake List of paths to folders of fake faces
   
   @example 
-  import sys; sys.path.append('faceoff')
   from faceoff import detector
 
   (X,y) = detector.create_dataset(

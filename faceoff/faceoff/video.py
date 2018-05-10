@@ -8,8 +8,6 @@ from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 from moviepy.video.fx.all import crop
 from moviepy.editor import AudioFileClip, clips_array, TextClip, CompositeVideoClip
 
-from faceoff.faceswap_api import FaceSwapInterface
-
 def read_video_youtube(uri, out_path):
   """
   @return VideoFileClip
@@ -89,6 +87,8 @@ def extract_faces(frame_path, out_path, face_path, processes=1):
     msg = '[extract_faces] Skipping extraction since faces already exist at {}'
     print(msg.format(out_path))
     return
+
+  from faceoff.faceswap_api import FaceSwapInterface
 
   os.makedirs(out_path)
   print('[extract_faces] Starting on {}'.format(frame_path))
