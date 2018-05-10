@@ -33,36 +33,13 @@ git clone https://github.com/goberoi/faceit.git
 cd faceit
 git submodule update --init --recursive
 
-cd faceswap
-# GPU
-sudo docker build -t deepfakes-gpu -f Dockerfile.gpu .
-
-# CPU
-sudo docker build -t deepfakes-cpu .
-
-cd ..
-```
-Create snapshot
-
-
-```{bash}
-mkdir -p data/persons
-
-# GPU
-nvidia-docker run --name deepfakes-gpu -p 8888:8888 -v [src_folder]:/srv -it deepfakes-gpu
-# CPU
-docker run --name deepfakes-gpu -p 8888:8888 -v $(pwd):/srv -it deepfakes-cpu
-
-#docker exec -it deepfakes bash
+sudo make init-ubuntu
+sudo make
+sudo make run
 ```
 
 From within container
 ```{bash}
-x apt-get update
-x apt-get install ffmpeg
-pip3 install -r requirements.txt
-pip3 install requests
-
 wget https://gazettereview.com/wp-content/uploads/2017/04/jimmy-fallon.jpg -O data/persons/fallon.jpg
 wget http://i.huffpost.com/gen/2571402/thumbs/o-JOHN-OLIVER-facebook.jpg -O data/persons/oliver.jpg
 
@@ -73,7 +50,9 @@ echo "Training model"
 python3 faceit.py train fallon_to_oliver
 
 echo "Convert video"
-python faceit.py convert fallon_to_oliver fallon_emmastone.mp4 --start 40 --duration 55 --side-by-side
+python3 faceit.py convert fallon_to_oliver fallon_emmastone.mp4 --start 40 --duration 55 --side-by-side
+python3 faceit.py convert fallon_to_oliver fallon_xfinity.mp4 --start 0 --face-filter
+
 ```
 
 

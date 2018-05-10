@@ -4,8 +4,9 @@
 #from keras.applications.xception import Xception, preprocess_input
 #model = Xception(weights='imagenet')
 """
-This can be done locally to save hosting fees
-$ sudo make bash
+
+Extract frames  from fake videos. This can be done locally to save hosting fees.
+$ sudo make ARCH=cpu run
 
 from faceoff import video
 
@@ -31,8 +32,29 @@ $ sudo make run
 
 # Extract faces from fake video frames
 video.extract_faces(frame_path, face_path, face_example, processes=1)
-video.create_dataset([])
+
+# Now classify fakes from reals
+from faceoff import detector
+
+(X,y) = detector.create_dataset(
+  ['data/processed/fallon_emmastone.mp4_faces'], 
+  ['data/processed/fallon_emmastone_fake.mp4_faces'])
+data = detector.split_data(X,y)
+
+model = detector.create_model()
+model = detector.train_detector(model, data)
+
+
+# Validation set
+(X_val,y_val) = detector.create_dataset(
+  ['data/processed/fallon_xfinity.mp4_faces'], 
+  ['data/processed/fallon_dakota_fake.mp4_faces'])
+data_val = detector.split_data(X_val,y_val)
+
+
+detector.validate_model(model)
 """
+
 import numpy as np
 import sklearn
 import cv2
@@ -62,18 +84,6 @@ from keras.applications.inception_v3 import preprocess_input, decode_predictions
 # Compare with
 # cv2.imread('data/processed/fallon_emmastone_fake.mp4_faces/frame_7240.jpg')
 # which uses BGR color-space
-
-"""
-from faceoff import detector
-
-(X,y) = detector.create_dataset(
-  ['data/processed/fallon_emmastone.mp4_faces'], 
-  ['data/processed/fallon_emmastone_fake.mp4_faces'])
-data = detector.split_data(X,y)
-
-model = detector.create_model()
-model = detector.train_detector(model, data)
-"""
 
 
 
@@ -127,10 +137,14 @@ def train_detector(model, data, epochs=20):
   print('Loss {}, Accuracy {}'.format(loss, acc))
   return model
 
-def is_fake(frames, model):
-  x = np.expand_dims(x, axis=0)
+def validate_model(model, X_val, y_val):
+  loss, acc = model.evaluate(X_val, y_val)
+  print('Loss {}, Accuracy {}'.format(loss, acc))
+  return (loss, acc)
 
-  preds = model.predict(x)
+
+def is_fake(frames, model):
+  preds = model.predict(frames)
   print('Predicted:')
   for p in decode_predictions(preds, top=5)[0]:
     print("Score {}, Label {}".format(p[2], p[1]))
