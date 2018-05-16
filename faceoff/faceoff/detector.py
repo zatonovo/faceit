@@ -10,9 +10,9 @@ $ sudo make ARCH=cpu run
 
 from faceoff import video
 
+face_example = 'data/persons/oliver.jpg'
 frame_path = 'data/processed/fallon_emmastone_fake.mp4_frames'
 face_path = 'data/processed/fallon_emmastone_fake.mp4_faces'
-face_example = 'data/persons/oliver.jpg'
 
 # Extract frames from original/swapped stacked video
 v = video.read_video_file('fallon_emmastone.mp4')
@@ -31,6 +31,15 @@ $ cd ~/workspace/faceit
 $ sudo make run
 
 # Extract faces from fake video frames
+from faceoff import video
+face_example = 'data/persons/oliver.jpg'
+frame_path = 'data/processed/fallon_dakota_fake.mp4_frames'
+face_path = 'data/processed/fallon_dakota_fake.mp4_faces'
+
+# Skip this if you did it locally
+v = video.read_video_file('data/output/fallon_dakota.mp4')
+video.extract_frames(v, frame_path)
+
 video.extract_faces(frame_path, face_path, face_example, processes=1)
 
 # Now classify fakes from reals
@@ -44,15 +53,34 @@ data = detector.split_data(X,y)
 model = detector.create_model()
 model = detector.train_detector(model, data)
 
+0.9913809/3809 [==============================] - 16s 4ms/step - loss: 0.0294 - acc: 0.9913 - val_loss: 0.5343 - val_acc: 0.8122
+953/953 [==============================] - 3s 3ms/step
+Loss 0.5342530553763711, Accuracy 0.8121720884554283
+
+
+del X, y, data
 
 # Validation set
+from faceoff import video, detector
+face_example = 'data/persons/oliver.jpg'
+frame_path = 'data/processed/fallon_dakota_fake.mp4_frames'
+face_path = 'data/processed/fallon_dakota_fake.mp4_faces'
+
+# NOTE: Frames should already exist from video generation
+v = video.read_video_file('data/output/fallon_dakota.mp4')
+video.extract_frames(v, frame_path)
+video.extract_faces(frame_path, face_path, face_example, processes=1)
+
 (X_val,y_val) = detector.create_dataset(
-  ['data/processed/fallon_xfinity.mp4_faces'], 
+  ['data/processed/oliver_pastor.mp4_faces'], 
   ['data/processed/fallon_dakota_fake.mp4_faces'])
-data_val = detector.split_data(X_val,y_val)
+
+detector.validate_model(model, X_val, y_val)
 
 
-detector.validate_model(model)
+5045/5045 [==============================] - 17s 3ms/step
+Loss 2.80179295832858, Accuracy 0.2836471754802821
+(2.80179295832858, 0.2836471754802821)
 """
 
 import numpy as np
@@ -138,6 +166,8 @@ def train_detector(model, data, epochs=20):
   return model
 
 def validate_model(model, X_val, y_val):
+  X_val = preprocess_input(X_val)
+  y_val = np_utils.to_categorical(y_val)
   loss, acc = model.evaluate(X_val, y_val)
   print('Loss {}, Accuracy {}'.format(loss, acc))
   return (loss, acc)

@@ -44,6 +44,10 @@ COPY ./libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb .
 RUN dpkg -i libcudnn6_6.0.21-1+cuda8.0_amd64.deb
 RUN dpkg -i libcudnn6-dev_6.0.21-1+cuda8.0_amd64.deb
 
+RUN apt-get install -y locales
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
 #RUN apt-get clean \
 # && rm -rf /var/lib/apt/lists/*
 WORKDIR /srv/

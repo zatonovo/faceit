@@ -33,6 +33,7 @@ else
   DOCKER = docker
 endif
 PYTHONPATH ?= .:faceswap:faceoff
+LOCALE_VARS = -e TERM=xterm
 
 all: get-cuda
 	mkdir -p data/persons
@@ -84,7 +85,7 @@ init-debian: init
 
 
 run:
-	$(DOCKER) run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv -e PYTHONPATH="$(PYTHONPATH)" -it --rm deepfakes
+	$(DOCKER) run -p 8888:8888 -p 6006:6006 -v $(shell pwd):/srv $(LOCALE_VARS) -e PYTHONPATH="$(PYTHONPATH)" -it --rm deepfakes
 
 demo: run
 	echo "Get example faces"
